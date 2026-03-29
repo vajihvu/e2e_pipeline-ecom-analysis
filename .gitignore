@@ -1,0 +1,54 @@
+# ─── Python ───────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ─── Virtual environments ─────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ─── Environment / secrets ────────────────────
+.env
+*.env
+# Keep the example, never the real one
+!.env.example
+
+# ─── Data files ───────────────────────────────
+# Raw CSVs are generated locally — don't commit them
+data/raw/*.csv
+data/raw/*.json
+
+# Spark output folders (part-*.csv, _SUCCESS, etc.)
+data/processed/
+
+# ─── Spark / Java temp files ──────────────────
+derby.log
+metastore_db/
+spark-warehouse/
+
+# ─── Airflow ──────────────────────────────────
+airflow.db
+airflow.cfg
+airflow_local_settings.py
+logs/
+.airflow/
+
+# ─── Docker ───────────────────────────────────
+# Keep docker-compose.yml, ignore runtime volumes
+pgdata/
+
+# ─── IDE / OS ─────────────────────────────────
+.idea/
+.vscode/
+*.DS_Store
+Thumbs.db
+*.swp
+*.swo

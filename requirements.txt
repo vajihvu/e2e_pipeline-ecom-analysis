@@ -1,0 +1,12 @@
+# requirements.txt
+# -----------------
+# Python dependencies for the pipeline.
+# Install with: pip install -r requirements.txt
+#
+# Note: PySpark requires Java 8 or 11 to be installed separately.
+# Check: java -version
+
+pyspark==3.5.1          # Data transformation engine (runs locally)
+psycopg2-binary==2.9.9  # PostgreSQL adapter (binary = no compiler needed)
+apache-airflow==2.8.1   # Workflow orchestration
+python-dotenv==1.0.1    # Loads .env file into environment variables

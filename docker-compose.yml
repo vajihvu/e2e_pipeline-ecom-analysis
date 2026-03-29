@@ -1,0 +1,74 @@
+version: "3.8"
+
+# ─────────────────────────────────────────────────────────
+# docker-compose.yml
+# ------------------
+# Spins up only what we need:
+#   1. PostgreSQL  — the data warehouse
+#   2. Airflow     — pipeline orchestration (webserver + scheduler)
+#
+# Usage:
+#   docker-compose up -d          → start all services
+#   docker-compose down           → stop all services
+#   docker-compose logs airflow   → view logs
+# ─────────────────────────────────────────────────────────
+
+services:
+
+  # ─────────────────────────────────────────
+  # PostgreSQL — Data Warehouse
+  # ─────────────────────────────────────────
+  postgres:
+    image: postgres:15
+    container_name: ecommerce_postgres
+    environment:
+      POSTGRES_USER:     postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB:       ecommerce
+    ports:
+      - "5432:5432"        # Expose so you can connect via DBeaver / psql
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/init.sql  # Auto-run on first start
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # Airflow — Orchestration
+  # Uses the standalone mode (simplest setup, good for single-node dev)
+  # ─────────────────────────────────────────
+  airflow:
+    image: apache/airflow:2.8.1
+    container_name: ecommerce_airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR:             SequentialExecutor    # Simple, no Celery needed
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      AIRFLOW__CORE__LOAD_EXAMPLES:        "false"               # Don't clutter UI with demos
+      PIPELINE_BASE_DIR:                   /opt/pipeline/ecommerce-pipeline
+      POSTGRES_HOST:                       postgres
+      POSTGRES_PORT:                       "5432"
+      POSTGRES_DB:                         ecommerce
+      POSTGRES_USER:                       postgres
+      POSTGRES_PASSWORD:                   postgres
+    ports:
+      - "8080:8080"        # Airflow web UI → http://localhost:8080
+    volumes:
+      - ./dags:/opt/airflow/dags               # Mount our DAG
+      - ./scripts:/opt/pipeline/ecommerce-pipeline/scripts
+      - ./config:/opt/pipeline/ecommerce-pipeline/config
+      - ./data:/opt/pipeline/ecommerce-pipeline/data
+    command: standalone                          # Runs webserver + scheduler in one container
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  pgdata:    # Persists Postgres data across docker-compose restarts
