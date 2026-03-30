@@ -56,4 +56,22 @@ Thumbs.db
 # ─── Local temp/debug files ───────────────────
 DAG_ERROR.txt
 airflow_err.txt
+spark_out.txt
 hadoop/
+
+# ─── Airflow runtime files ────────────────────
+airflow.db
+airflow.db-journal
+logs/
+.airflow/
+airflow.cfg
+airflow_local_settings.py
+
+# ─── Venv / local installs ────────────────────
+venv/
+.venv/
+env/
+
+# ─── Scripts/verify helpers (local only) ──────
+scripts/verify.py
+scripts/init_db.py
