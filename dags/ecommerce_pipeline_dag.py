@@ -14,11 +14,11 @@ How to use:
   2. Set PIPELINE_BASE_DIR in the DAG or as an Airflow Variable
   3. Trigger manually or let the scheduler run it
 """
-
+import sys
+sys.path.append('/opt/airflow')
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-import sys
 import os
 
 # ──────────────────────────────────────────────

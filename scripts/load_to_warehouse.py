@@ -17,6 +17,7 @@ Prerequisites:
   - Tables already created (run sql/create_tables.sql first)
 """
 
+from __future__ import annotations
 import os
 import csv
 import logging
